@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo"
 	"gorm.io/driver/sqlite"
@@ -23,8 +24,15 @@ func main() {
 	if err != nil {
 		log.Fatalln("db error: {}", err)
 	}
-
 	e := echo.New()
+	handlers(e, db)
+
+	if err := e.Start(":1323"); err != http.ErrServerClosed {
+		log.Fatal(err)
+	}
+}
+
+func handlers(e *echo.Echo, db *gorm.DB) {
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
@@ -53,8 +61,24 @@ func main() {
 		log.Println(result, users)
 		return c.JSON(http.StatusOK, users)
 	})
+	e.GET("/expert", func(c echo.Context) error {
+		users := []Expert{}
+		result := db.Find(&users)
 
-	if err := e.Start(":1323"); err != http.ErrServerClosed {
-		log.Fatal(err)
-	}
+		log.Println(result, users)
+		return c.JSON(http.StatusOK, users)
+	})
+	e.GET("/expert/text", func(c echo.Context) error {
+		users := []Expert{}
+		result := db.Find(&users)
+
+		log.Println(result, users)
+		uList := []string{}
+		for _, row := range users {
+			uList = append(uList, row.Name)
+		}
+		us := strings.Join(uList[:], ",")
+		return c.String(http.StatusOK, us)
+	})
+
 }
