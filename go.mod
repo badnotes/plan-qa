@@ -1,4 +1,4 @@
-module test.plan
+module github.com/badnotes/plan-qa
 
 go 1.19
 

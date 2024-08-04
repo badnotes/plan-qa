@@ -1,0 +1,42 @@
+package handler
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/badnotes/plan-qa/internal/model"
+	"github.com/labstack/echo"
+	"gorm.io/gorm"
+)
+
+func ShopHandlers(e *echo.Echo, db *gorm.DB) {
+
+	e.POST("/shop", func(c echo.Context) (err error) {
+		u := new(model.Shop)
+		if err := c.Bind(u); err != nil {
+			return c.String(http.StatusBadRequest, "bad request")
+		}
+
+		// Load into separate struct for security
+		data := model.Shop{
+			Boss_phone: u.Boss_phone,
+			Name:       u.Name,
+			Info:       u.Info,
+			Phone:      u.Phone,
+		}
+
+		log.Println(data)
+		db.Create(&data)
+
+		return c.JSON(http.StatusOK, u)
+	})
+
+	e.GET("/shop", func(c echo.Context) error {
+		data := []model.Shop{}
+		result := db.Find(&data)
+
+		log.Println(result, data)
+		return c.JSON(http.StatusOK, data)
+	})
+
+}
