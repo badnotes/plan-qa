@@ -20,6 +20,11 @@ type ResourceDto struct {
 	Info string `json:"info"`
 }
 
+type ReqScheduling struct {
+	Name string `json:"name"`
+	Time uint   `json:"time"`
+}
+
 type SchedulingDto struct {
 	Sc_date    string    `json:"date"`
 	Time_start time.Time `json:"time"`
@@ -74,9 +79,13 @@ func scheduling(c echo.Context) error {
 	if sk == "" {
 		return c.JSON(http.StatusOK, Status{Code: 0, Msg: "操作失败"})
 	}
-	name := c.QueryParams().Get("name")
-	t := c.QueryParams().Get("time")
-	log.Println("scheduling param: {}, {}", name, t)
+
+	u := new(ReqScheduling)
+	if err := c.Bind(u); err != nil {
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	log.Println("scheduling param: {}, {}", u.Name, u.Time)
 
 	res := []model.Resource{}
 	model.MyDB.Where("sk = ?", sk).Find(&res)
@@ -84,7 +93,7 @@ func scheduling(c echo.Context) error {
 	resMap := map[uint]string{}
 	resId := uint(0)
 	for _, row := range res {
-		if row.Name == name {
+		if row.Name == u.Name {
 			resId = row.ID
 		}
 		resMap[row.ID] = row.Name
@@ -97,7 +106,8 @@ func scheduling(c echo.Context) error {
 
 	sc_id := uint(0)
 	for _, row := range data {
-		if t == row.Time_start.Format("15") && row.Occupied == 0 {
+		et := StringToUint(row.Time_start.Format("15"))
+		if u.Time == et && row.Occupied == 0 {
 			sc_id = row.ID
 			break
 		}

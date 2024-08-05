@@ -2,6 +2,7 @@ package handler
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,4 +18,9 @@ func Parse_shop(c echo.Context) (string, error) {
 type Status struct {
 	Code uint   `json:"code"`
 	Msg  string `json:"msg"`
+}
+
+func StringToUint(s string) uint {
+	i, _ := strconv.Atoi(s)
+	return uint(i)
 }
