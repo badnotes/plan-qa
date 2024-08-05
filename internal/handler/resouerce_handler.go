@@ -6,10 +6,9 @@ import (
 
 	"github.com/badnotes/plan-qa/internal/model"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
-func ResourceHandlers(e *echo.Echo, db *gorm.DB) {
+func ResourceHandlers(e *echo.Echo) {
 
 	e.POST("/resource", func(c echo.Context) (err error) {
 		u := new(model.Resource)
@@ -26,14 +25,14 @@ func ResourceHandlers(e *echo.Echo, db *gorm.DB) {
 		}
 
 		log.Println(data)
-		db.Create(&data)
+		model.MyDB.Create(&data)
 
 		return c.JSON(http.StatusOK, u)
 	})
 
 	e.GET("/resource", func(c echo.Context) error {
 		data := []model.Resource{}
-		result := db.Find(&data)
+		result := model.MyDB.Find(&data)
 
 		log.Println(result, data)
 		return c.JSON(http.StatusOK, data)

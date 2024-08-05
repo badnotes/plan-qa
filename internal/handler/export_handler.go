@@ -7,10 +7,9 @@ import (
 
 	"github.com/badnotes/plan-qa/internal/model"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
-func ExpertHandlers(e *echo.Echo, db *gorm.DB) {
+func ExpertHandlers(e *echo.Echo) {
 
 	e.POST("/expert", func(c echo.Context) (err error) {
 		u := new(model.Expert)
@@ -26,14 +25,14 @@ func ExpertHandlers(e *echo.Echo, db *gorm.DB) {
 		}
 
 		log.Println(user)
-		db.Create(&user)
+		model.MyDB.Create(&user)
 
 		return c.JSON(http.StatusOK, u)
 	})
 
 	e.GET("/expert", func(c echo.Context) error {
 		data := []model.Expert{}
-		result := db.Find(&data)
+		result := model.MyDB.Find(&data)
 
 		log.Println(result, data)
 		return c.JSON(http.StatusOK, data)
@@ -41,7 +40,7 @@ func ExpertHandlers(e *echo.Echo, db *gorm.DB) {
 
 	e.GET("/expert/text", func(c echo.Context) error {
 		users := []model.Expert{}
-		result := db.Find(&users)
+		result := model.MyDB.Find(&users)
 
 		log.Println(result, users)
 		uList := []string{}

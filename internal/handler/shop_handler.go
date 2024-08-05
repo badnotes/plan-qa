@@ -6,10 +6,9 @@ import (
 
 	"github.com/badnotes/plan-qa/internal/model"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
-func ShopHandlers(e *echo.Echo, db *gorm.DB) {
+func ShopHandlers(e *echo.Echo) {
 
 	e.POST("/shop", func(c echo.Context) (err error) {
 		u := new(model.Shop)
@@ -26,14 +25,14 @@ func ShopHandlers(e *echo.Echo, db *gorm.DB) {
 		}
 
 		log.Println(data)
-		db.Create(&data)
+		model.MyDB.Create(&data)
 
 		return c.JSON(http.StatusOK, u)
 	})
 
 	e.GET("/shop", func(c echo.Context) error {
 		data := []model.Shop{}
-		result := db.Find(&data)
+		result := model.MyDB.Find(&data)
 
 		log.Println(result, data)
 		return c.JSON(http.StatusOK, data)

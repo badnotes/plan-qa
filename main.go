@@ -1,24 +1,18 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/badnotes/plan-qa/internal/handler"
+	"github.com/badnotes/plan-qa/internal/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 func main() {
 
-	db, err := gorm.Open(sqlite.Open("data/gorm.db"), &gorm.Config{})
-	log.Println("db: {}", db.Name())
-	if err != nil {
-		log.Fatalln("db error: {}", err)
-	}
+	model.InitDB()
 	e := echo.New()
 
 	// Middleware
@@ -42,11 +36,10 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	handler.BotHandlers(e, db)
-
-	handler.ExpertHandlers(e, db)
-	handler.ShopHandlers(e, db)
-	handler.ResourceHandlers(e, db)
+	handler.BotHandlers(e)
+	handler.ExpertHandlers(e)
+	handler.ShopHandlers(e)
+	handler.ResourceHandlers(e)
 
 	if err := e.Start(":1323"); err != http.ErrServerClosed {
 		log.Fatal(err)
