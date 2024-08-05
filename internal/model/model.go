@@ -17,6 +17,7 @@ type Expert struct {
 // 店铺
 type Shop struct {
 	gorm.Model
+	Sk         string `json:"sk"`
 	Boss_phone string `json:"boss_phone"`
 	Name       string `json:"name"`
 	Info       string `json:"info"`
@@ -27,17 +28,17 @@ type Shop struct {
 // 资源
 type Resource struct {
 	gorm.Model
-	Shop_id uint   `json:"shop_id"`
-	Name    string `json:"name"`
-	Info    string `json:"info"`
-	Phone   string `json:"phone"`
+	Sk    string `json:"sk"`
+	Name  string `json:"name"`
+	Info  string `json:"info"`
+	Phone string `json:"phone"`
 }
 
 // 排班
 type Scheduling struct {
 	gorm.Model
-	Shop_id     uint      `json:"shop_id"`
-	Sc_date     string    `json:"sc_date"`
+	Sk          string    `json:"sk"`
+	Sc_date     time.Time `json:"sc_date"`
 	Time_start  time.Time `json:"time_start"`
 	Time_end    time.Time `json:"time_end"`
 	Time_long   uint      `json:"time_long"`
@@ -48,7 +49,7 @@ type Scheduling struct {
 // 预约
 type Appointment struct {
 	gorm.Model
-	Shop_id      uint   `json:"shop_id"`
+	Sk           string `json:"sk"`
 	Sc_id        uint   `json:"sc_id"`
 	Ap_type      uint   `json:"ap_type"`
 	Client_wx    string `json:"client_wx"`

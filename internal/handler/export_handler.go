@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/badnotes/plan-qa/internal/model"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 

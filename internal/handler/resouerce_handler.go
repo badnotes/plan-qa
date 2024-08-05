@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/badnotes/plan-qa/internal/model"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -19,10 +19,10 @@ func ResourceHandlers(e *echo.Echo, db *gorm.DB) {
 
 		// Load into separate struct for security
 		data := model.Resource{
-			Shop_id: u.Shop_id,
-			Name:    u.Name,
-			Info:    u.Info,
-			Phone:   u.Phone,
+			Sk:    u.Sk,
+			Name:  u.Name,
+			Info:  u.Info,
+			Phone: u.Phone,
 		}
 
 		log.Println(data)

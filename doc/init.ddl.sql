@@ -2,6 +2,7 @@
 -- 店铺
 CREATE TABLE "shop" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	sk TEXT, -- 所属店铺
 	boss_phone TEXT, -- 归属老板
 	name TEXT, -- 店铺名称
 	info TEXT, -- 介绍
@@ -14,7 +15,7 @@ CREATE TABLE "shop" (
 -- 店铺配置
 CREATE TABLE "shop_config" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	shop_id INTEGER, -- 所属店铺
+	sk TEXT, -- 所属店铺
 	work_start DATETIME, -- 上班时间
 	work_end DATETIME, -- 下班时间
 	work_shift INTEGER, -- 班次时长-分钟
@@ -23,9 +24,9 @@ CREATE TABLE "shop_config" (
 	deleted_at DATETIME);
 
 -- 资源
-CREATE TABLE "resource" (
+CREATE TABLE "resources" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	shop_id INTEGER, -- 所属店铺
+	sk TEXT, -- 所属店铺
 	name TEXT, -- 资源名称
 	info TEXT, -- 介绍
 	phone text, -- 电话
@@ -34,15 +35,15 @@ CREATE TABLE "resource" (
 	deleted_at DATETIME);
 
 -- 排班
-CREATE TABLE "scheduling" (
+CREATE TABLE "schedulings" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	shop_id INTEGER, -- 所属店铺
+	sk TEXT, -- 所属店铺
 	sc_date Date, -- 日期
     time_start DATETIME, -- 开始时间
 	time_end DATETIME, -- 结束时间
     time_long INTEGER, -- 时长，单位-分钟
     resource_id INTEGER, -- 资源ID
-	occupied INTEGER, -- 是否被预定
+	occupied INTEGER DEFAULT 0, -- 是否被预定
 	created_at DATETIME DEFAULT (datetime('now','localtime')), 
 	updated_at DATETIME DEFAULT (datetime('now','localtime')), 
 	deleted_at DATETIME);
@@ -50,7 +51,7 @@ CREATE TABLE "scheduling" (
 -- 预约
 CREATE TABLE "appointment" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	shop_id INTEGER, -- 所属店铺
+	sk TEXT, -- 所属店铺
     sc_id INTEGER, -- 排班ID
     ap_type INTEGER, -- 预约类型 -- AI/人工
     client_wx text, -- 客户微信ID
