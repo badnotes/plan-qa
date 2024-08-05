@@ -40,6 +40,7 @@ func main() {
 	handler.ExpertHandlers(e)
 	handler.ShopHandlers(e)
 	handler.ResourceHandlers(e)
+	handler.SchedulingHandlers(e)
 
 	if err := e.Start(":1323"); err != http.ErrServerClosed {
 		log.Fatal(err)

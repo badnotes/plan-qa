@@ -3,37 +3,18 @@ package handler
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/badnotes/plan-qa/internal/model"
 	"github.com/labstack/echo/v4"
 )
 
 func BotHandlers(e *echo.Echo) {
-	e.GET("/bot/resource", get)
-	e.GET("/bot/scheduling", listScheduling)
-	e.POST("/bot/scheduling", scheduling)
+	e.GET("/bot/resource", botGet)
+	e.GET("/bot/scheduling", botListScheduling)
+	e.POST("/bot/scheduling", botScheduling)
 }
 
-type ResourceDto struct {
-	Name string `json:"name"`
-	Info string `json:"info"`
-}
-
-type ReqScheduling struct {
-	Name string `json:"name"`
-	Time uint   `json:"time"`
-}
-
-type SchedulingDto struct {
-	Sc_date    string    `json:"date"`
-	Time_start time.Time `json:"time"`
-	Time_long  uint      `json:"time_long"`
-	Resource   string    `json:"resource"`
-	Occupied   uint      `json:"appointment_status"` // 是否被预定
-}
-
-func get(c echo.Context) error {
+func botGet(c echo.Context) error {
 	sk, _ := Parse_shop(c)
 	data := []model.Resource{}
 	result := model.MyDB.Where("sk = ?", sk).Find(&data)
@@ -47,7 +28,7 @@ func get(c echo.Context) error {
 	return c.JSON(http.StatusOK, dl)
 }
 
-func listScheduling(c echo.Context) error {
+func botListScheduling(c echo.Context) error {
 	sk, _ := Parse_shop(c)
 	data := []model.Scheduling{}
 	result := model.MyDB.Where("sk = ?", sk).Find(&data)
@@ -68,13 +49,14 @@ func listScheduling(c echo.Context) error {
 			Time_start: row.Time_start,
 			Time_long:  row.Time_long,
 			Resource:   resMap[row.Resource_id],
+			Occupied:   row.Occupied,
 		})
 	}
 
 	return c.JSON(http.StatusOK, dl)
 }
 
-func scheduling(c echo.Context) error {
+func botScheduling(c echo.Context) error {
 	sk, _ := Parse_shop(c)
 	if sk == "" {
 		return c.JSON(http.StatusOK, Status{Code: 0, Msg: "操作失败"})
@@ -98,7 +80,7 @@ func scheduling(c echo.Context) error {
 		}
 		resMap[row.ID] = row.Name
 	}
-	log.Println("find resource id: {}", resId)
+	log.Println("find resource id: ", resId)
 
 	data := []model.Scheduling{}
 	model.MyDB.Where("sk = ? and resource_id = ?", sk, resId).Find(&data)
