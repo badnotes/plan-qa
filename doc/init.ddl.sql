@@ -1,4 +1,15 @@
 
+-- 账号
+CREATE TABLE "accounts" (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	phone TEXT, -- 所属店铺
+	pwd TEXT, -- 归属老板
+	username TEXT, -- 店铺名称
+	info TEXT, -- 介绍
+	created_at DATETIME DEFAULT (datetime('now','localtime')), 
+	updated_at DATETIME DEFAULT (datetime('now','localtime')), 
+	deleted_at DATETIME);
+
 -- 店铺
 CREATE TABLE "shop" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,

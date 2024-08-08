@@ -14,6 +14,14 @@ type Expert struct {
 	Email string `json:"email"`
 }
 
+type Account struct {
+	gorm.Model
+	Phone    string `json:"phone"`
+	Pwd      string `json:"pwd"`
+	Username string `json:"username"`
+	Info     string `json:"info"`
+}
+
 // 店铺
 type Shop struct {
 	gorm.Model
