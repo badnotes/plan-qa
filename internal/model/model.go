@@ -47,8 +47,8 @@ type Scheduling struct {
 	gorm.Model
 	Sk          string    `json:"sk"`
 	Sc_date     time.Time `json:"sc_date"`
-	Time_start  time.Time `json:"time_start"`
-	Time_end    time.Time `json:"time_end"`
+	Time_start  string    `json:"time_start"`
+	Time_end    string    `json:"time_end"`
 	Time_long   uint      `json:"time_long"`
 	Resource_id uint      `json:"resource_id"`
 	Occupied    uint      `json:"occupied"` // 是否被预定
