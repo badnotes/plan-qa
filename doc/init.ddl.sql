@@ -60,7 +60,7 @@ CREATE TABLE "schedulings" (
 	deleted_at DATETIME);
 
 -- 预约
-CREATE TABLE "appointment" (
+CREATE TABLE "appointments" (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	sk TEXT, -- 所属店铺
     sc_id INTEGER, -- 排班ID

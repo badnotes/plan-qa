@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -185,7 +186,7 @@ func botSchedulingByTemplate(c echo.Context) error {
 	if u.Time == "" && u.Client_time != "" {
 		u.Time = parse_time(u.Client_time)
 	}
-	if u.Date == "" && u.Date != "" {
+	if u.Date != "" {
 		u.Date = parse_date(u.Date)
 	}
 	if u.Date == "" && u.Client_time != "" {
@@ -254,6 +255,23 @@ func botSchedulingByTemplate(c echo.Context) error {
 		return c.JSON(http.StatusOK, Status{Code: 1, Msg: "预约失败,目前可预约时间为:" + u.Date + ", " + result})
 	}
 
+	ap := model.Appointment{
+		Sk:                sk,
+		Sc_id:             op_sc_id,
+		Ap_type:           1,
+		Client_wx:         "",
+		Client_name:       u.Name,
+		Client_phone:      u.Client_phone,
+		Client_sex:        u.Client_sex,
+		Client_hw:         u.Client_hw,
+		Client_experience: u.Client_experience,
+		Client_time:       u.Client_time,
+		Client_style:      u.Client_style,
+		Client_content:    u.Client_content,
+		Client_address:    u.Client_address,
+	}
+
+	model.MyDB.Model(&model.Appointment{}).Save(&ap)
 	model.MyDB.Model(&model.Scheduling{}).Where("id = ?", op_sc_id).Update("occupied", 1)
 	counter++
 	log.Println("Counter:", counter)
@@ -282,33 +300,20 @@ func parse_date(originalDate string) string {
 		return tomorrow.Format("2006-01-02")
 	}
 
-	layout1 := "2006-01-02"
-	t, err1 := time.Parse(layout1, originalDate)
-	if err1 == nil {
-		return t.Format("2006-01-02")
+	dt := reg_parse_date(originalDate)
+	if dt != "" {
+		return dt
 	}
 
-	layout3 := "2006-1-2"
-	t, err3 := time.Parse(layout3, originalDate)
-	if err3 == nil {
-		return t.Format("2006-01-02")
+	if time.Now().Hour() >= 18 {
+		// 计算明天的时间
+		tomorrow := time.Now().AddDate(0, 0, 1)
+		// 格式化明天的日期为字符串
+		return tomorrow.Format("2006-01-02")
+	} else {
+		// 格式化日期为字符串
+		return time.Now().Format("2006-01-02")
 	}
-	// 定义日期格式
-	layout2 := "2006年1月2日"
-	// 解析日期字符串
-	t, err2 := time.Parse(layout2, originalDate)
-	if err2 == nil {
-		return t.Format("2006-01-02")
-	}
-
-	// 定义日期格式
-	layout := "2006年1月2"
-	// 解析日期字符串
-	t, err := time.Parse(layout, originalDate)
-	if err == nil {
-		return t.Format("2006-01-02")
-	}
-	return time.Now().Format("2006-01-02")
 }
 
 func parse_time(originalDate string) string {
@@ -381,4 +386,37 @@ func _pt(h string, originalDate string) string {
 func isNumeric(s string) bool {
 	_, err := strconv.Atoi(s)
 	return err == nil
+}
+
+func reg_parse_date(text string) string {
+
+	//text := "今天是2023年4月20日，明天是2023年4月21日。"
+
+	reg_list := []string{
+		`\d{4}年\d{1,2}月\d{1,2}日`,
+		`\d{4}-\d{1,2}-\d{1,2}`,
+		`\d{4}年\d{1,2}月\d{1,2}`,
+	}
+	for _, row := range reg_list {
+		// 定义一个正则表达式来匹配日期
+		re := regexp.MustCompile(row)
+
+		// 查找所有匹配的日期
+		matches := re.FindAllString(text, -1)
+
+		// 输出匹配的日期
+		for _, match := range matches {
+			fmt.Println("找到的日期:", match)
+
+			// 解析日期
+			date, err := time.Parse("2006年1月2日", match)
+			if err != nil {
+				fmt.Println("解析日期失败:", err)
+				continue
+			}
+			return date.Format("2006-01-02")
+			fmt.Println("解析后的日期:", date)
+		}
+	}
+	return ""
 }
