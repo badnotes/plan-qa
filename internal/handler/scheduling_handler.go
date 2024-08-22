@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func SchedulingHandlers(e *echo.Echo) {
+func SchedulingHandlers(e *echo.Group) {
 	e.GET("/scheduling/list", listScheduling)
 	e.POST("/scheduling/save", scheduling)
 }

@@ -21,7 +21,7 @@ type LoginBody struct {
 	Password string `json:"password"`
 }
 
-func LoginHandlers(e *echo.Echo) {
+func LoginHandlers(e *echo.Group) {
 	e.POST("/login", login)
 }
 

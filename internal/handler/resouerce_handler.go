@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ResourceHandlers(e *echo.Echo) {
+func ResourceHandlers(e *echo.Group) {
 
 	e.POST("/resource", func(c echo.Context) (err error) {
 		u := new(model.Resource)

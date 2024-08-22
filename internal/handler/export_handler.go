@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ExpertHandlers(e *echo.Echo) {
+func ExpertHandlers(e *echo.Group) {
 
 	e.POST("/expert", func(c echo.Context) (err error) {
 		u := new(model.Expert)

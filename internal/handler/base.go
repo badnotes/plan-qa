@@ -16,8 +16,9 @@ func Parse_shop(c echo.Context) (string, error) {
 }
 
 type Status struct {
-	Code uint   `json:"code"`
-	Msg  string `json:"msg"`
+	Code uint        `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
 }
 
 type ResourceDto struct {

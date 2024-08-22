@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ShopHandlers(e *echo.Echo) {
+func ShopHandlers(e *echo.Group) {
 
 	e.POST("/shop", func(c echo.Context) (err error) {
 		u := new(model.Shop)

@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
+	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/badnotes/plan-qa/internal/handler"
@@ -34,10 +37,35 @@ func main() {
 		},
 	}))
 
+	wx_url, err := url.Parse("http://110.40.156.115:8000")
+	if err != nil {
+		e.Logger.Printf(err.Error())
+	}
+
+	// /wx转发给bot-ai
+	e.Use(middleware.ProxyWithConfig(middleware.ProxyConfig{
+		Skipper: func(c echo.Context) bool {
+			return !strings.HasPrefix(c.Request().RequestURI, "/wx")
+		},
+		Balancer: middleware.NewRoundRobinBalancer([]*middleware.ProxyTarget{
+			{
+				URL: wx_url,
+			},
+		}),
+		Rewrite: map[string]string{
+			"^/wx/*": "/wx/$1",
+		},
+		RegexRewrite: map[*regexp.Regexp]string{
+			regexp.MustCompile("^/foo/([0-9].*)"):  "/num/$1",
+			regexp.MustCompile("^/bar/(.+?)/(.*)"): "/baz/$2/$1",
+		},
+	}))
+
 	// auth
 	e.Use(middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
 		Skipper: func(c echo.Context) bool {
-			return c.Request().RequestURI == "/login" || strings.HasPrefix(c.Request().RequestURI, "/bot")
+			return true
+			// return c.Request().RequestURI == "/login" || strings.HasPrefix(c.Request().RequestURI, "/bot")
 		},
 		KeyLookup: "cookie:" + handler.Cookie_key,
 		Validator: handler.VerifyCookie,
@@ -48,12 +76,23 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	handler.LoginHandlers(e)
+	// bot plugin
 	handler.BotHandlers(e)
-	handler.ExpertHandlers(e)
-	handler.ShopHandlers(e)
-	handler.ResourceHandlers(e)
-	handler.SchedulingHandlers(e)
+
+	// Group level middleware
+	g := e.Group("/api")
+	handler.LoginHandlers(g)
+	handler.ExpertHandlers(g)
+	handler.ShopHandlers(g)
+	handler.ResourceHandlers(g)
+	handler.SchedulingHandlers(g)
+	handler.AppointmentHandlers(g)
+
+	data, err := json.MarshalIndent(e.Routes(), "", "  ")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("reoutes:", string(data))
 
 	if err := e.Start(":1323"); err != http.ErrServerClosed {
 		log.Fatal(err)

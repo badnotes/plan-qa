@@ -60,6 +60,8 @@ type Appointment struct {
 	Sk                string `json:"sk"`
 	Sc_id             uint   `json:"sc_id"`
 	Ap_type           uint   `json:"ap_type"`
+	Sc_date           string `json:"sc_date"`
+	Time_start        string `json:"time_start"`
 	Client_wx         string `json:"client_wx"`
 	Client_name       string `json:"client_name"`
 	Client_phone      string `json:"client_phone"`

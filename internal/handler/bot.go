@@ -259,6 +259,8 @@ func botSchedulingByTemplate(c echo.Context) error {
 		Sk:                sk,
 		Sc_id:             op_sc_id,
 		Ap_type:           1,
+		Sc_date:           u.Date,
+		Time_start:        u.Time,
 		Client_wx:         "",
 		Client_name:       u.Name,
 		Client_phone:      u.Client_phone,

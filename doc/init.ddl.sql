@@ -65,6 +65,8 @@ CREATE TABLE "appointments" (
 	sk TEXT, -- 所属店铺
     sc_id INTEGER, -- 排班ID
     ap_type INTEGER, -- 预约类型 -- AI/人工
+	sc_date Date, -- 日期
+    time_start TEXT, -- 开始时间
     client_wx text, -- 客户微信
     client_name text, -- 客户名称 
     client_phone text, -- 客户电话 
