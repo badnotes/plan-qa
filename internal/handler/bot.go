@@ -78,7 +78,11 @@ func botListScheduling(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, dl)
+	res := make(map[string]interface{})
+	res["scheduling"] = dl
+	res["today"] = time.Now().Format("2006-01-02")
+
+	return c.JSON(http.StatusOK, res)
 }
 
 func botScheduling(c echo.Context) error {
